@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>MailCraft Icon Generator</title>
+  <style>
+    body { font-family: Helvetica, sans-serif; background: #beb19e; color: #53433e; padding: 32px; }
+    h2 { font-size: 14px; text-transform: uppercase; letter-spacing: .1em; font-weight: 400; margin-bottom: 20px; }
+    .icons { display: flex; gap: 24px; align-items: flex-end; flex-wrap: wrap; margin-bottom: 24px; }
+    canvas { border: 1px solid rgba(83,67,62,0.2); border-radius: 6px; }
+    .btn { background: #53433e; color: #f7f2ec; border: none; padding: 10px 24px; border-radius: 6px; font-size: 11px; text-transform: uppercase; letter-spacing: .1em; cursor: pointer; margin-top: 16px; }
+  </style>
+</head>
+<body>
+  <h2>MailCraft AI — Icon Generator</h2>
+  <p style="font-size:12px;opacity:.7;margin-bottom:20px">Click Download to save the 4 icon sizes to your <code>icons/</code> folder.</p>
+  <div class="icons" id="icons"></div>
+  <button class="btn" onclick="downloadAll()">Download all icons</button>
+
+  <script>
+    const sizes = [16, 32, 48, 128];
+    const canvases = {};
+
+    function drawIcon(size) {
+      const canvas = document.createElement('canvas');
+      canvas.width = size;
+      canvas.height = size;
+      canvas.title = `${size}×${size}`;
+      const ctx = canvas.getContext('2d');
+
+      const r = size * 0.14;
+      // Background
+      ctx.fillStyle = '#53433e';
+      roundRect(ctx, 0, 0, size, size, r);
+      ctx.fill();
+
+      // ✦ sparkle
+      ctx.fillStyle = '#f7f2ec';
+      ctx.font = `${size * 0.58}px serif`;
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText('✦', size / 2, size / 2 + size * 0.03);
+
+      canvases[size] = canvas;
+      return canvas;
+    }
+
+    function roundRect(ctx, x, y, w, h, r) {
+      ctx.beginPath();
+      ctx.moveTo(x + r, y);
+      ctx.lineTo(x + w - r, y);
+      ctx.quadraticCurveTo(x + w, y, x + w, y + r);
+      ctx.lineTo(x + w, y + h - r);
+      ctx.quadraticCurveTo(x + w, y + h, x + w - r, y + h);
+      ctx.lineTo(x + r, y + h);
+      ctx.quadraticCurveTo(x, y + h, x, y + h - r);
+      ctx.lineTo(x, y + r);
+      ctx.quadraticCurveTo(x, y, x + r, y);
+      ctx.closePath();
+    }
+
+    const wrap = document.getElementById('icons');
+    sizes.forEach(s => {
+      const c = drawIcon(s);
+      const label = document.createElement('div');
+      label.innerHTML = `<div style="margin-bottom:4px;font-size:10px;opacity:.6">${s}×${s}</div>`;
+      label.appendChild(c);
+      wrap.appendChild(label);
+    });
+
+    function downloadAll() {
+      sizes.forEach(s => {
+        const a = document.createElement('a');
+        a.download = `icon${s}.png`;
+        a.href = canvases[s].toDataURL('image/png');
+        a.click();
+      });
+    }
+  </script>
+</body>
+</html>
